@@ -26,10 +26,10 @@ async fn main() {
     let service = Arc::new(UserService::new(repo));
 
     let app = Router::new()
-        .route("/users", post(create_user_handler))
+        .route("/api/v1/user", post(create_user_handler))
         .with_state(service);
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    println!("✅ Server running on http://localhost:3000");
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
+    println!("✅ Server running on http://localhost:8080");
     axum::serve(listener, app).await.unwrap();
 }
