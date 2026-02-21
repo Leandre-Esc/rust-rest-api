@@ -4,6 +4,12 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-actix-web = "4"
 uuid = { version = "1", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
+serde = { version = "1.0.219", features = ["derive"] }
+sqlx = { version = "0.8.6", features = [ "postgres", "runtime-tokio-native-tls", "chrono", "uuid" ] }
+http = "0.2.12"
+tokio = { version = "1.47.1", features = ["rt", "rt-multi-thread", "macros"] }
+axum = "0.8.8"
+async-trait = "0.1.89"
+dotenvy = "0.15.7"

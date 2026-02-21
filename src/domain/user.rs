@@ -1,37 +1,30 @@
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use chrono::{Utc, NaiveDateTime, DateTime};
+use async_trait::async_trait;
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct User {
     pub id: Uuid,
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+    pub username: String,
+    pub email: String,
+    pub password: String,
+    pub created_at: Option<DateTime<Utc>>,
+}
+
+// Objet de transfert interne au domaine pour la création
+pub struct CreateUserCommand {
     pub first_name: String,
     pub last_name: String,
     pub username: String,
     pub email: String,
     pub password: String,
-    pub birthdate: NaiveDateTime,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
 }
 
-impl User {
-    pub fn new(
-        first_name: String,
-        last_name: String,
-        username: String,
-        email: String,
-        password: String,
-        birthdate: NaiveDateTime,
-    ) -> Self {
-        Self {
-            id: Uuid::new_v4(),
-            first_name,
-            last_name,
-            username,
-            email,
-            password,
-            birthdate,
-            created_at: Utc::now(),
-            updated_at: Utc::now(),
-        }
-    }
+#[async_trait]
+pub trait UserRepository: Send + Sync {
+    // On passe l'objet de commande plutôt que 6 arguments
+    async fn save(&self, cmd: CreateUserCommand) -> Result<User, String>;
 }
