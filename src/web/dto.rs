@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
-use crate::domain::user::CreateUserCommand;
+use crate::domain::user::{CreateUserCommand, User};
 
 #[derive(Deserialize)]
 pub struct CreateUserRequest {
@@ -12,7 +12,6 @@ pub struct CreateUserRequest {
     pub password: String,
 }
 
-// Conversion facile du DTO vers la commande de domaine
 impl From<CreateUserRequest> for CreateUserCommand {
     fn from(req: CreateUserRequest) -> Self {
         Self {
@@ -32,4 +31,16 @@ pub struct UserResponse {
     pub username: String,
     pub email: String,
     pub created_at: Option<DateTime<Utc>>,
+}
+
+impl From<User> for UserResponse {
+    fn from(user: User) -> Self {
+        Self {
+            id: user.id,
+            full_name: format!("{} {}", user.first_name.unwrap_or_default(), user.last_name.unwrap_or_default()),
+            username: user.username,
+            email: user.email,
+            created_at: user.created_at
+        }
+    }
 }
