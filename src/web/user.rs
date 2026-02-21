@@ -7,7 +7,6 @@ pub async fn create_user_handler(
     State(service): State<Arc<UserService>>,
     Json(payload): Json<CreateUserRequest>,
 ) -> impl IntoResponse {
-    // Transformation DTO -> Commande Domaine
     let command = payload.into();
 
     match service.create_user(command).await {

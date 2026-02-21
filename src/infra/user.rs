@@ -5,6 +5,22 @@ use uuid::Uuid;
 
 #[async_trait]
 impl UserRepository for PostgresRepository {
+    async fn is_exists(&self, email: &str) -> bool {
+        let result = sqlx::query!(
+            r#"
+            SELECT EXISTS(SELECT 1 FROM users WHERE email = $1) as "exists!"
+            "#,
+            email
+        )
+            .fetch_one(&self.pool)
+            .await;
+
+        match result {
+            Ok(record) => record.exists,
+            Err(_) => false,
+        }
+    }
+
     async fn save(&self, cmd: CreateUserCommand) -> Result<User, String> {
         let user = sqlx::query_as!(
             User,

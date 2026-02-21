@@ -25,6 +25,6 @@ pub struct CreateUserCommand {
 
 #[async_trait]
 pub trait UserRepository: Send + Sync {
-    // On passe l'objet de commande plutôt que 6 arguments
+    async fn is_exists(&self, email: &str) -> bool;
     async fn save(&self, cmd: CreateUserCommand) -> Result<User, String>;
 }
