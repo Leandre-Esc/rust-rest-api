@@ -42,4 +42,16 @@ impl UserRepository for PostgresRepository {
 
         Ok(user)
     }
+
+    async fn get_all(&self) -> Result<Vec<User>, String> {
+        let users = sqlx::query_as!(
+            User,
+            r#"SELECT * FROM users"#
+        )
+            .fetch_all(&self.pool)
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(users)
+    }
 }

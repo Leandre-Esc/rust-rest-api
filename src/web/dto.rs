@@ -44,3 +44,12 @@ impl From<User> for UserResponse {
         }
     }
 }
+
+#[derive(Serialize)]
+pub struct UsersResponse(pub Vec<UserResponse>);
+
+impl From<Vec<User>> for UsersResponse {
+    fn from(users: Vec<User>) -> Self {
+        Self(users.into_iter().map(UserResponse::from).collect())
+    }
+}

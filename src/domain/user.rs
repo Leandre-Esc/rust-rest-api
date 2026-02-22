@@ -27,4 +27,5 @@ pub struct CreateUserCommand {
 pub trait UserRepository: Send + Sync {
     async fn is_exists(&self, email: &str) -> bool;
     async fn save(&self, cmd: CreateUserCommand) -> Result<User, String>;
+    async fn get_all(&self) -> Result<Vec<User>, String>;
 }

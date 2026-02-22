@@ -26,4 +26,8 @@ impl UserService {
         self.repo.save(cmd).await
             .map_err(|e| AppError::Internal(e))
     }
+
+    pub async fn get_all_user(&self) -> Result<Vec<User>, AppError> {
+        self.repo.get_all().await.map_err(|e| AppError::Internal(e.to_string()))
+    }
 }
