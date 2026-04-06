@@ -24,6 +24,11 @@ impl From<CreateUserRequest> for CreateUserCommand {
     }
 }
 
+#[derive(Deserialize)]
+pub struct GetUserByEmailRequest {
+    pub email: String
+}
+
 #[derive(Serialize)]
 pub struct UserResponse {
     pub id: Uuid,

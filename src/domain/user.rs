@@ -10,6 +10,7 @@ pub struct User {
     pub last_name: Option<String>,
     pub username: String,
     pub email: String,
+    #[serde(skip_serializing)]
     pub password: String,
     pub created_at: Option<DateTime<Utc>>,
     pub updated_at: Option<DateTime<Utc>>,
@@ -26,6 +27,7 @@ pub struct CreateUserCommand {
 #[async_trait]
 pub trait UserRepository: Send + Sync {
     async fn is_exists(&self, email: &str) -> bool;
-    async fn save(&self, cmd: CreateUserCommand) -> Result<User, String>;
+    async fn create(&self, cmd: CreateUserCommand) -> Result<User, String>;
     async fn get_all(&self) -> Result<Vec<User>, String>;
+    async fn get_by_email(&self, email: &str) -> Result<Option<User>, String>;
 }

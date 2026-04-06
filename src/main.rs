@@ -6,6 +6,7 @@ use dotenvy::dotenv;
 use infra::postgres::PostgresRepository;
 use application::user::UserService;
 use web::user::{create_user_handler, get_all_user_handler};
+use crate::web::user::get_user_by_email_handler;
 
 mod domain;
 mod application;
@@ -29,6 +30,7 @@ async fn main() {
     let app = Router::new()
         .route("/api/v1/user", post(create_user_handler))
         .route("/api/v1/users", get(get_all_user_handler))
+        .route("/api/v1/user", get(get_user_by_email_handler))
         .with_state(service);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();

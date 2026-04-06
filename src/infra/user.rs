@@ -21,7 +21,7 @@ impl UserRepository for PostgresRepository {
         }
     }
 
-    async fn save(&self, cmd: CreateUserCommand) -> Result<User, String> {
+    async fn create(&self, cmd: CreateUserCommand) -> Result<User, String> {
         let user = sqlx::query_as!(
             User,
             r#"
@@ -53,5 +53,18 @@ impl UserRepository for PostgresRepository {
             .map_err(|e| e.to_string())?;
 
         Ok(users)
+    }
+
+    async fn get_by_email(&self, email: &str) -> Result<Option<User>, String> {
+        let user = sqlx::query_as!(
+            User,
+            r#"SELECT * FROM users WHERE email = $1"#,
+            email
+        )
+            .fetch_optional(&self.pool)
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(user)
     }
 }
