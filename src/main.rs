@@ -21,7 +21,7 @@ async fn main() {
         .max_connections(5)
         .connect(&db_url)
         .await
-        .expect("Impossible de se connecter à Postgres");
+        .expect("Connection to database failed");
 
     let repo = Arc::new(PostgresRepository::new(pool));
     let service = Arc::new(UserService::new(repo));

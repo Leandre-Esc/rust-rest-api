@@ -12,9 +12,9 @@ pub struct User {
     pub email: String,
     pub password: String,
     pub created_at: Option<DateTime<Utc>>,
+    pub updated_at: Option<DateTime<Utc>>,
 }
 
-// Objet de transfert interne au domaine pour la création
 pub struct CreateUserCommand {
     pub first_name: String,
     pub last_name: String,

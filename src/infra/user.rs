@@ -25,9 +25,9 @@ impl UserRepository for PostgresRepository {
         let user = sqlx::query_as!(
             User,
             r#"
-            INSERT INTO users (id, first_name, last_name, username, email, password, created_at)
-            VALUES ($1, $2, $3, $4, $5, $6, NOW())
-            RETURNING id, first_name, last_name, username, email, password, created_at as "created_at: _"
+            INSERT INTO users (id, first_name, last_name, username, email, password, created_at, updated_at)
+            VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+            RETURNING id, first_name, last_name, username, email, password, created_at as "created_at: _", updated_at as "updated_at: _"
             "#,
             Uuid::new_v4(),
             cmd.first_name,
