@@ -1,10 +1,21 @@
 use async_trait::async_trait;
-use crate::domain::user::{CreateUserCommand, User, UserRepository};
-use crate::infra::postgres::PostgresRepository;
+use sqlx::PgPool;
 use uuid::Uuid;
 
+use crate::users::domain::{CreateUserCommand, User, UserRepository};
+
+pub struct PostgresUserRepository {
+    pool: PgPool,
+}
+
+impl PostgresUserRepository {
+    pub fn new(pool: PgPool) -> Self {
+        Self { pool }
+    }
+}
+
 #[async_trait]
-impl UserRepository for PostgresRepository {
+impl UserRepository for PostgresUserRepository {
     async fn is_exists(&self, email: &str) -> bool {
         let result = sqlx::query!(
             r#"
@@ -12,8 +23,8 @@ impl UserRepository for PostgresRepository {
             "#,
             email
         )
-            .fetch_one(&self.pool)
-            .await;
+        .fetch_one(&self.pool)
+        .await;
 
         match result {
             Ok(record) => record.exists,
@@ -36,18 +47,15 @@ impl UserRepository for PostgresRepository {
             cmd.email,
             cmd.password
         )
-            .fetch_one(&self.pool)
-            .await
-            .map_err(|e| e.to_string())?;
+        .fetch_one(&self.pool)
+        .await
+        .map_err(|e| e.to_string())?;
 
         Ok(user)
     }
 
     async fn get_all(&self) -> Result<Vec<User>, String> {
-        let users = sqlx::query_as!(
-            User,
-            r#"SELECT * FROM users"#
-        )
+        let users = sqlx::query_as!(User, r#"SELECT * FROM users"#)
             .fetch_all(&self.pool)
             .await
             .map_err(|e| e.to_string())?;
@@ -56,11 +64,7 @@ impl UserRepository for PostgresRepository {
     }
 
     async fn get_by_email(&self, email: &str) -> Result<Option<User>, String> {
-        let user = sqlx::query_as!(
-            User,
-            r#"SELECT * FROM users WHERE email = $1"#,
-            email
-        )
+        let user = sqlx::query_as!(User, r#"SELECT * FROM users WHERE email = $1"#, email)
             .fetch_optional(&self.pool)
             .await
             .map_err(|e| e.to_string())?;

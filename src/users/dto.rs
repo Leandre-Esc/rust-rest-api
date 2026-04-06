@@ -1,7 +1,8 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use chrono::{DateTime, Utc};
-use crate::domain::user::{CreateUserCommand, User};
+
+use crate::users::domain::{CreateUserCommand, User};
 
 #[derive(Deserialize)]
 pub struct CreateUserRequest {
@@ -26,7 +27,7 @@ impl From<CreateUserRequest> for CreateUserCommand {
 
 #[derive(Deserialize)]
 pub struct GetUserByEmailRequest {
-    pub email: String
+    pub email: String,
 }
 
 #[derive(Serialize)]
@@ -42,10 +43,14 @@ impl From<User> for UserResponse {
     fn from(user: User) -> Self {
         Self {
             id: user.id,
-            full_name: format!("{} {}", user.first_name.unwrap_or_default(), user.last_name.unwrap_or_default()),
+            full_name: format!(
+                "{} {}",
+                user.first_name.unwrap_or_default(),
+                user.last_name.unwrap_or_default()
+            ),
             username: user.username,
             email: user.email,
-            created_at: user.created_at
+            created_at: user.created_at,
         }
     }
 }

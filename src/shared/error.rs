@@ -1,8 +1,16 @@
-use axum::http::StatusCode;
 use axum::Json;
+use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
-use crate::domain::error::AppError;
 use serde_json::json;
+
+#[derive(Debug)]
+pub enum AppError {
+    BadRequest(String),
+    NotFound(String),
+    AlreadyExists(String),
+    Internal(String),
+    Unauthorized,
+}
 
 impl IntoResponse for AppError {
     fn into_response(self) -> Response {

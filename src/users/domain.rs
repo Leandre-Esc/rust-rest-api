@@ -1,7 +1,7 @@
+use async_trait::async_trait;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-use async_trait::async_trait;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct User {

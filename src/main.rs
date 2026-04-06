@@ -1,17 +1,6 @@
-use axum::{routing::post, Router};
-use sqlx::postgres::PgPoolOptions;
-use std::sync::Arc;
-use axum::routing::get;
 use dotenvy::dotenv;
-use infra::postgres::PostgresRepository;
-use application::user::UserService;
-use web::user::{create_user_handler, get_all_user_handler};
-use crate::web::user::get_user_by_email_handler;
-
-mod domain;
-mod application;
-mod infra;
-mod web;
+use rust_rest_api::app::build_app;
+use sqlx::postgres::PgPoolOptions;
 
 #[tokio::main]
 async fn main() {
@@ -24,14 +13,7 @@ async fn main() {
         .await
         .expect("Connection to database failed");
 
-    let repo = Arc::new(PostgresRepository::new(pool));
-    let service = Arc::new(UserService::new(repo));
-
-    let app = Router::new()
-        .route("/api/v1/user", post(create_user_handler))
-        .route("/api/v1/users", get(get_all_user_handler))
-        .route("/api/v1/user", get(get_user_by_email_handler))
-        .with_state(service);
+    let app = build_app(pool);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
     println!("✅ Server running on http://localhost:8080");
