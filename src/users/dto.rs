@@ -30,6 +30,15 @@ pub struct GetUserByEmailRequest {
     pub email: String,
 }
 
+#[derive(Deserialize)]
+pub struct UpdateUserRequest {
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+    pub username: Option<String>,
+    pub email: Option<String>,
+    pub password: Option<String>,
+}
+
 #[derive(Serialize)]
 pub struct UserResponse {
     pub id: Uuid,
