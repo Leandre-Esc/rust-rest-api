@@ -1,14 +1,14 @@
 use std::sync::Arc;
 
-use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
-use axum::extract::Path;
-use uuid::Uuid;
 use crate::shared::error::AppError;
+use crate::users::dto::{UpdateUserRequest, UserDeleteResponse};
 use crate::users::{
     dto::{CreateUserRequest, GetUserByEmailRequest, UserResponse, UsersResponse},
     service::UserService,
 };
-use crate::users::dto::UpdateUserRequest;
+use axum::extract::Path;
+use axum::{Json, extract::State, http::StatusCode, response::IntoResponse};
+use uuid::Uuid;
 
 pub async fn get_all_user_handler(
     State(service): State<Arc<UserService>>,
@@ -49,4 +49,12 @@ pub async fn update_user_handler(
 ) -> Result<impl IntoResponse, AppError> {
     let user = service.update_user(id, payload).await?;
     Ok((StatusCode::OK, Json(UserResponse::from(user))))
+}
+
+pub async fn delete_user_handler(
+    State(service): State<Arc<UserService>>,
+    Path(id): Path<Uuid>,
+) -> Result<impl IntoResponse, AppError> {
+    let id = service.delete_user(id).await?;
+    Ok((StatusCode::OK, Json(UserDeleteResponse { id })))
 }

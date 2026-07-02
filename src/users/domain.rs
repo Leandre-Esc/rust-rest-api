@@ -42,4 +42,5 @@ pub trait UserRepository: Send + Sync {
     async fn get_by_email(&self, email: &str) -> Result<Option<User>, String>;
     async fn create(&self, cmd: CreateUserCommand) -> Result<User, String>;
     async fn update(&self, cmd: UpdateUserCommand) -> Result<User, String>;
+    async fn delete(&self, id: Uuid) -> Result<Uuid, String>;
 }

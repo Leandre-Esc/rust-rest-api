@@ -92,4 +92,14 @@ impl UserRepository for PostgresUserRepository {
 
         Ok(user)
     }
+
+    async fn delete(&self, id: Uuid) -> Result<Uuid, String> {
+        let deleted_id = sqlx::query_scalar::<_, Uuid>(queries::DELETE)
+            .bind(id)
+            .fetch_one(&self.pool)
+            .await
+            .map_err(|e| e.to_string())?;
+
+        Ok(deleted_id)
+    }
 }

@@ -72,3 +72,8 @@ impl From<Vec<User>> for UsersResponse {
         Self(users.into_iter().map(UserResponse::from).collect())
     }
 }
+
+#[derive(Serialize)]
+pub struct UserDeleteResponse {
+    pub id: Uuid,
+}

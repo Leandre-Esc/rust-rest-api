@@ -50,3 +50,11 @@ RETURNING
 	created_at AS "created_at: _",
 	updated_at AS "updated_at: _"
 "#;
+
+pub const DELETE: &str = r#"
+DELETE FROM users
+WHERE 
+    id = $1
+RETURNING
+    id,
+"#;

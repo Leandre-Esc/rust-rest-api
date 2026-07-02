@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
-use bcrypt::{DEFAULT_COST, hash};
-use uuid::Uuid;
 use crate::shared::error::AppError;
 use crate::users::domain::{CreateUserCommand, UpdateUserCommand, User, UserRepository};
 use crate::users::dto::UpdateUserRequest;
+use bcrypt::{DEFAULT_COST, hash};
+use uuid::Uuid;
 
 pub struct UserService {
     repository: Arc<dyn UserRepository>,
@@ -50,9 +50,9 @@ impl UserService {
             .ok_or_else(|| AppError::NotFound(format!("User {} not found", id)))?;
 
         let password = match req.password {
-            Some(plain) => Some (
-                hash(plain, DEFAULT_COST).map_err(|e| AppError::Internal(e.to_string()))?
-            ),
+            Some(plain) => {
+                Some(hash(plain, DEFAULT_COST).map_err(|e| AppError::Internal(e.to_string()))?)
+            }
             None => None,
         };
 
@@ -65,6 +65,19 @@ impl UserService {
             password: password.unwrap_or(existing.password).into(),
         };
 
-        self.repository.update(cmd).await.map_err(AppError::Internal)
+        self.repository
+            .update(cmd)
+            .await
+            .map_err(AppError::Internal)
+    }
+
+    pub async fn delete_user(&self, id: Uuid) -> Result<Uuid, AppError> {
+        self.repository
+            .get_by_id(id)
+            .await
+            .map_err(AppError::Internal)?
+            .ok_or_else(|| AppError::NotFound(format!("User {} not found", id)))?;
+
+        self.repository.delete(id).await.map_err(AppError::Internal)
     }
 }
