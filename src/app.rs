@@ -1,52 +1,22 @@
 use std::sync::Arc;
 
-use axum::Json;
-use axum::http::StatusCode;
-use axum::response::IntoResponse;
-use axum::routing::patch;
-use axum::{Router, routing::get};
-use serde::Serialize;
+use axum::Router;
 use sqlx::PgPool;
 
-use crate::users::{
-    handlers::{
-        create_user_handler, delete_user_handler, get_all_user_handler, get_user_by_email_handler,
-        update_user_handler,
-    },
-    repository::PostgresUserRepository,
-    service::UserService,
+use crate::{
+    app_state::AppState,
+    ping,
+    users::{self, repository::PostgresUserRepository, service::UserService},
 };
 
 pub fn build_app(pool: PgPool) -> Router {
     let repository = Arc::new(PostgresUserRepository::new(pool));
-    let service = Arc::new(UserService::new(repository));
+    let user_service = Arc::new(UserService::new(repository));
+    let state = AppState::new(user_service);
 
-    let users_routes = Router::new()
-        .route("/", get(get_all_user_handler).post(create_user_handler))
-        .route("/search", get(get_user_by_email_handler))
-        .route(
-            "/{id}",
-            patch(update_user_handler).delete(delete_user_handler),
-        );
+    let api_v1 = Router::new()
+        .nest("/users", users::routes::router())
+        .nest("/ping", ping::routes::router());
 
-    let ping_routes = Router::new().route("/", get(pong));
-
-    Router::new()
-        .nest("/api/v1/users", users_routes)
-        .nest("/ping", ping_routes)
-        .with_state(service)
-}
-
-#[derive(Serialize)]
-pub struct PongResponse {
-    message: String,
-}
-
-pub async fn pong() -> impl IntoResponse {
-    (
-        StatusCode::OK,
-        Json(PongResponse {
-            message: "pong".to_string(),
-        }),
-    )
+    Router::new().nest("/api/v1", api_v1).with_state(state)
 }

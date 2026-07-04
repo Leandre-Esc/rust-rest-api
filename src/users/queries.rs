@@ -15,7 +15,7 @@ SELECT * FROM users WHERE email = $1
 "#;
 
 pub const CREATE: &str = r#"
-INSERT INSERT users (id, first_name, last_name, username, email, "password", created_at, updated_at)
+INSERT INTO users (id, first_name, last_name, username, email, "password", created_at, updated_at)
 VALUES
     ($1, $2, $3, $4, $5, $6, NOW(), NOW())
 RETURNING
@@ -24,9 +24,9 @@ RETURNING
 	last_name,
 	username,
 	email,
-    password,
-	created_at AS "created_at: _",
-	updated_at AS "updated_at: _"
+  password,
+	created_at,
+	updated_at
 "#;
 
 pub const UPDATE: &str = r#"
