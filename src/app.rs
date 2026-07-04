@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use axum::Router;
 use sqlx::PgPool;
+use tower_http::trace::TraceLayer;
 
 use crate::{
     app_state::AppState,
@@ -18,5 +19,8 @@ pub fn build_app(pool: PgPool) -> Router {
         .nest("/users", users::routes::router())
         .nest("/ping", ping::routes::router());
 
-    Router::new().nest("/api/v1", api_v1).with_state(state)
+    Router::new()
+        .nest("/api/v1", api_v1)
+        .layer(TraceLayer::new_for_http())
+        .with_state(state)
 }

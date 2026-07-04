@@ -1,5 +1,5 @@
 use dotenvy::dotenv;
-use rust_rest_api::app::build_app;
+use rust_rest_api::{app::build_app, shared::logging::init_tracing};
 use sqlx::postgres::PgPoolOptions;
 
 #[tokio::main]
@@ -12,6 +12,8 @@ async fn main() {
         .connect(&db_url)
         .await
         .expect("Connection to database failed");
+
+    let _guard = init_tracing();
 
     let app = build_app(pool);
 
