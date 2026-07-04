@@ -1,7 +1,11 @@
 use std::sync::Arc;
 
+use axum::Json;
+use axum::http::StatusCode;
+use axum::response::IntoResponse;
 use axum::routing::patch;
 use axum::{Router, routing::get};
+use serde::Serialize;
 use sqlx::PgPool;
 
 use crate::users::{
@@ -25,7 +29,24 @@ pub fn build_app(pool: PgPool) -> Router {
             patch(update_user_handler).delete(delete_user_handler),
         );
 
+    let ping_routes = Router::new().route("/", get(pong));
+
     Router::new()
         .nest("/api/v1/users", users_routes)
+        .nest("/ping", ping_routes)
         .with_state(service)
+}
+
+#[derive(Serialize)]
+pub struct PongResponse {
+    message: String,
+}
+
+pub async fn pong() -> impl IntoResponse {
+    (
+        StatusCode::OK,
+        Json(PongResponse {
+            message: "pong".to_string(),
+        }),
+    )
 }
