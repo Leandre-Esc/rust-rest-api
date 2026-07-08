@@ -1,0 +1,3 @@
+{"timestamp":"2026-07-08T20:49:51.160878Z","level":"ERROR","fields":{"message":"response failed","classification":"Status code: 500 Internal Server Error","latency":"887 ms"},"target":"tower_http::trace::on_failure"}
+{"timestamp":"2026-07-08T21:02:03.182524Z","level":"INFO","fields":{"message":"result of is_exists function","email":"leandre.esc@icloud.com","exists":false},"target":"rust_rest_api::users::service"}
+{"timestamp":"2026-07-08T21:02:04.120164Z","level":"ERROR","fields":{"message":"response failed","classification":"Status code: 500 Internal Server Error","latency":"949 ms"},"target":"tower_http::trace::on_failure"}

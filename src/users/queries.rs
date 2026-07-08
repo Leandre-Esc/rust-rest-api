@@ -1,5 +1,5 @@
 pub const IS_EXISTS: &str = r#"
-SELECT EXISTS(SELECT 1 FROM users WHERE email = $1) as "exists!"
+SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)
 "#;
 
 pub const GET_ALL: &str = r#"

@@ -27,7 +27,12 @@ impl UserService {
     }
 
     pub async fn create_user(&self, mut cmd: CreateUserCommand) -> Result<User, AppError> {
-        if self.repository.is_exists(&cmd.email).await {
+        if self
+            .repository
+            .is_exists(&cmd.email)
+            .await
+            .map_err(AppError::Internal)?
+        {
             return Err(AppError::AlreadyExists("User already exists".to_string()));
         }
 

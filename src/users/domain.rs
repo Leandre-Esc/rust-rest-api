@@ -36,7 +36,7 @@ pub struct UpdateUserCommand {
 
 #[async_trait]
 pub trait UserRepository: Send + Sync {
-    async fn is_exists(&self, email: &str) -> bool;
+    async fn is_exists(&self, email: &str) -> Result<bool, String>;
     async fn get_all(&self) -> Result<Vec<User>, String>;
     async fn get_by_id(&self, id: Uuid) -> Result<Option<User>, String>;
     async fn get_by_email(&self, email: &str) -> Result<Option<User>, String>;

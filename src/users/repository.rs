@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use sqlx::{FromRow, PgPool};
+use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::users::domain::{CreateUserCommand, UpdateUserCommand, User, UserRepository};
@@ -15,23 +15,16 @@ impl PostgresUserRepository {
     }
 }
 
-#[derive(FromRow)]
-pub struct ExistsResult {
-    exists: Option<bool>,
-}
-
 #[async_trait]
 impl UserRepository for PostgresUserRepository {
-    async fn is_exists(&self, email: &str) -> bool {
-        let result = sqlx::query_as::<_, ExistsResult>(queries::IS_EXISTS)
+    async fn is_exists(&self, email: &str) -> Result<bool, String> {
+        let exists = sqlx::query_scalar::<_, bool>(queries::IS_EXISTS)
             .bind(email)
             .fetch_one(&self.pool)
-            .await;
+            .await
+            .map_err(|e| e.to_string())?;
 
-        match result {
-            Ok(record) => record.exists.unwrap_or(false),
-            Err(_) => false,
-        }
+        Ok(exists)
     }
 
     async fn get_all(&self) -> Result<Vec<User>, String> {
